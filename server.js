@@ -10,8 +10,15 @@ const cors = require('cors')
 
 // middleware
 app.use(express.json())
-app.use(cors())
-
+app.use(cors({
+    origin: [
+      'https://student-regis-frontend.leangseakkong.workers.dev',
+      'http://localhost:5173'  // keep for local dev
+    ],
+    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+  }))
 // routes first ✅
 app.use('/api/auth', authRouter)
 app.use('/api/student', studentRouter)
