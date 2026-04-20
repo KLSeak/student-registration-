@@ -3,6 +3,8 @@ const path = require('path')
 const fs = require('fs')
 const dayjs = require('dayjs')
 const {time} = require('console')
+const cloudinary = require('cloudinary').v2
+const { CloudinaryStorage } = require('multer-storage-cloudinary')
 
 const uploadPath = path.join(__dirname, '../upload')
 
@@ -10,14 +12,18 @@ if(!fs.existsSync('upload')){
     fs.mkdirSync('upload')
 }
 
-const storage = multer.diskStorage({
-    destination: function (req, file, cb){
-        cb (null, 'upload')
-    },
-    filename: function (req, file, cb){
-        const timestamp = dayjs().format('YYYY-MM-DD-HH-mm-ss')
-        cb(null, timestamp + "-" + file.originalname)
-    }
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+  })
+
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: 'student-register',  // folder name in Cloudinary
+    allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
+  }
 })
 
 const upload = multer({storage})
